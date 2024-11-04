@@ -5,10 +5,13 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lk.kushan.sms.bo.BoFactory;
+import lk.kushan.sms.bo.custom.LaptopBo;
 import lk.kushan.sms.bo.custom.StudentBo;
+import lk.kushan.sms.dto.CreateLaptopDto;
 import lk.kushan.sms.dto.StudentDto;
 
 import javafx.event.ActionEvent;
+import lk.kushan.sms.view.tm.LaptopTM;
 import lk.kushan.sms.view.tm.StudentTM;
 
 import java.sql.SQLException;
@@ -21,12 +24,21 @@ public class MainFormController {
     public Button btnStudentSave;
 
     private final StudentBo studentBo= BoFactory.getInstance().getBo(BoFactory.BoType.STUDENT);
+    private final LaptopBo laptopBo= BoFactory.getInstance().getBo(BoFactory.BoType.LAPTOP);
     public TableView<StudentTM> tblStudents;
     public TableColumn colStudentId;
     public TableColumn colStudentName;
     public TableColumn colContactNumber;
     public TableColumn colSeeMore;
     public TableColumn colDelete;
+    public TextField txtLapBrand;
+    public TextField txtLapSearch;
+    public TableView tblLaptops;
+    public TableColumn colLapId;
+    public TableColumn colBrand;
+    public TableColumn colLapDelete;
+    public ComboBox<Long> cmbStudent;
+    public Button btnLaptopSave;
 
     private StudentTM selectedStudentId=null;
 
@@ -38,7 +50,13 @@ public class MainFormController {
         colSeeMore.setCellValueFactory(new PropertyValueFactory<>("seeMoreBtn"));
         colDelete.setCellValueFactory(new PropertyValueFactory<>("deleteBtn"));
 
+        colLapId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colBrand.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        colLapDelete.setCellValueFactory(new PropertyValueFactory<>("laptopDeleteBtn"));
+
         loadAllStudents();
+        loadAllStudentsForLaptopSection();
+        loadAllLaptops();
 
         tblStudents.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue!=null) {
@@ -48,6 +66,14 @@ public class MainFormController {
                 btnStudentSave.setText("Update Student");
             }
         });
+    }
+
+    private void loadAllStudentsForLaptopSection() throws SQLException, ClassNotFoundException {
+        ObservableList<Long> obList=FXCollections.observableArrayList();
+        for(StudentDto dto:studentBo.findAllStudents()){
+            obList.add(dto.getId());
+        }
+        cmbStudent.setItems(obList);
     }
 
     private void loadAllStudents() throws SQLException, ClassNotFoundException {
@@ -70,6 +96,7 @@ public class MainFormController {
                         studentBo.deleteStudentById(tm.getId());
                         new Alert(Alert.AlertType.INFORMATION,"Student Deleted").show();
                         loadAllStudents();
+                        loadAllStudentsForLaptopSection();
                     } catch (Exception ex) {
                         new Alert(Alert.AlertType.ERROR,"Try Again").show();
 
@@ -98,6 +125,7 @@ public class MainFormController {
                 selectedStudentId=null;
                 btnStudentSave.setText("Save Student");
                 loadAllStudents();
+                loadAllStudentsForLaptopSection();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -107,6 +135,7 @@ public class MainFormController {
                 studentBo.saveStudent(dto);
                 new Alert(Alert.AlertType.INFORMATION, "Student Saved").show();
                 loadAllStudents();
+                loadAllStudentsForLaptopSection();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -126,6 +155,42 @@ public class MainFormController {
     }
 
     public void btnSaveLaptopOnAction(ActionEvent actionEvent) {
+        try{
+            laptopBo.saveLaptop(new CreateLaptopDto(cmbStudent.getValue(), txtLapBrand.getText()));
+            new Alert(Alert.AlertType.INFORMATION, "Laptop Saved").show();
+            loadAllLaptops();
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Try Again").show();
+
+        }
+    }
+
+    private void loadAllLaptops() throws SQLException, ClassNotFoundException {
+        ObservableList<LaptopTM> tmList= FXCollections.observableArrayList();
+        for (CreateLaptopDto dto:laptopBo.findAllLaptops()){
+            Button deleteBtn = new Button("Delete");
+            deleteBtn.setStyle("-fx-background-color: #c8392b");
+
+            LaptopTM tm=new LaptopTM(dto.getStudentId(),dto.getBrand(),deleteBtn);
+            tmList.add(tm);
+
+            deleteBtn.setOnAction(e->{
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you",ButtonType.YES,ButtonType.NO);
+                Optional<ButtonType> selectedButtonData = alert.showAndWait();
+                if(selectedButtonData.get().equals(ButtonType.YES)){
+                    try {
+                        laptopBo.deleteLaptopById(tm.getId());
+                        new Alert(Alert.AlertType.INFORMATION,"Laptop Deleted").show();
+                        loadAllLaptops();
+                    } catch (Exception ex) {
+                        new Alert(Alert.AlertType.ERROR,"Try Again").show();
+
+                    }
+                }
+            });
+
+        }
+        tblLaptops.setItems(tmList);
     }
 
     public void btnRegisterOnAction(ActionEvent actionEvent) {

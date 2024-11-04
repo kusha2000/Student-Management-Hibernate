@@ -103,7 +103,7 @@
             </TextField>
             <TableView fx:id="tblLaptops" layoutX="26.0" layoutY="114.0" prefHeight="200.0" prefWidth="615.0">
                <columns>
-                  <TableColumn fx:id="colLapId" prefWidth="104.0" text="#Lap Id" />
+                  <TableColumn fx:id="colLapId" prefWidth="104.0" text="#Student Id" />
                   <TableColumn fx:id="colBrand" prefWidth="248.0" text="Brand" />
                   <TableColumn fx:id="colLapDelete" prefWidth="262.0" text="Delete" />
                </columns>

@@ -97,10 +97,7 @@ package lk.kushan.sms.util;
 //
 //}
 
-import lk.kushan.sms.entity.Book;
-import lk.kushan.sms.entity.Laptop;
-import lk.kushan.sms.entity.Program;
-import lk.kushan.sms.entity.Student;
+import lk.kushan.sms.entity.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -124,6 +121,7 @@ public class HibernateUtil {
                 .addAnnotatedClass(Program.class)
                 .addAnnotatedClass(Laptop.class)
                 .addAnnotatedClass(Book.class)
+                .addAnnotatedClass(Registration.class)
                 .getMetadataBuilder()
                 .applyImplicitNamingStrategy(ImplicitNamingStrategyJpaCompliantImpl.INSTANCE)
                 .build();
