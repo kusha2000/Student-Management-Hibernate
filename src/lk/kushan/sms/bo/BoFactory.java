@@ -1,6 +1,7 @@
 package lk.kushan.sms.bo;
 
 import lk.kushan.sms.bo.custom.impl.LaptopBoImpl;
+import lk.kushan.sms.bo.custom.impl.ProgramBoImpl;
 import lk.kushan.sms.bo.custom.impl.StudentBoImpl;
 
 
@@ -23,7 +24,7 @@ public class BoFactory {
             case BOOK:
                 return null;
             case PROGRAM:
-                return null;
+                return (T) new ProgramBoImpl();
             case LAPTOP:
                 return (T) new LaptopBoImpl();
             default:

@@ -1,6 +1,7 @@
 package lk.kushan.sms.dao;
 
 import lk.kushan.sms.dao.custom.impl.LaptopDaoImpl;
+import lk.kushan.sms.dao.custom.impl.ProgramDaoImpl;
 import lk.kushan.sms.dao.custom.impl.StudentDaoImpl;
 
 public class DaoFactory {
@@ -22,7 +23,7 @@ public class DaoFactory {
             case BOOK:
                 return null;
             case PROGRAM:
-                return null;
+                return (T) new ProgramDaoImpl();
             case LAPTOP:
                 return (T) new LaptopDaoImpl();
             default:
