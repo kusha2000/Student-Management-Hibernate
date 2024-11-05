@@ -9,6 +9,7 @@ import lk.kushan.sms.bo.custom.LaptopBo;
 import lk.kushan.sms.bo.custom.ProgramBo;
 import lk.kushan.sms.bo.custom.StudentBo;
 import lk.kushan.sms.dto.CreateLaptopDto;
+import lk.kushan.sms.dto.CustomRegistrationData;
 import lk.kushan.sms.dto.ProgramDto;
 import lk.kushan.sms.dto.StudentDto;
 
@@ -53,6 +54,14 @@ public class MainFormController {
     public TableColumn colProgramCredit;
     public TableColumn colProgramDelete;
     public Button btnProgramSave;
+    public TextField txtLapSearch1;
+    public TableView<CustomRegistrationData> tblRegistrations;
+    public TableColumn colRegId;
+    public TableColumn colDate;
+    public TableColumn colStudent;
+    public TableColumn colProgram;
+    public ComboBox cmbStudentForProgram;
+    public ComboBox cmbPrograms;
 
     private StudentTM selectedStudentId=null;
     private ProgramTM selectedProgramId=null;
@@ -74,10 +83,16 @@ public class MainFormController {
         colProgramCredit.setCellValueFactory(new PropertyValueFactory<>("credit"));
         colProgramDelete.setCellValueFactory(new PropertyValueFactory<>("programDeleteBtn"));
 
+        colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        colStudent.setCellValueFactory(new PropertyValueFactory<>("student"));
+        colProgram.setCellValueFactory(new PropertyValueFactory<>("title"));
+
         loadAllStudents();
         loadAllStudentsForLaptopSection();
         loadAllLaptops();
         loadAllPrograms();
+        loadProgramsForRegistrationSection();
+        loadAllRegistrations();
 
         tblStudents.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue!=null) {
@@ -99,12 +114,26 @@ public class MainFormController {
 
     }
 
+    private void loadAllRegistrations() {
+        ObservableList<CustomRegistrationData> list =
+                FXCollections.observableArrayList(programBo.findAllRegistrations());
+        tblRegistrations.setItems(list);
+    }
+
+    private void loadProgramsForRegistrationSection() {
+        ObservableList<Long> obList = FXCollections.observableArrayList(
+                programBo.findAllStudentIds()
+        );
+        cmbPrograms.setItems(obList);
+    }
+
     private void loadAllStudentsForLaptopSection() throws SQLException, ClassNotFoundException {
         ObservableList<Long> obList=FXCollections.observableArrayList();
         for(StudentDto dto:studentBo.findAllStudents()){
             obList.add(dto.getId());
         }
         cmbStudent.setItems(obList);
+        cmbStudentForProgram.setItems(obList);
     }
 
     private void loadAllStudents() throws SQLException, ClassNotFoundException {
@@ -247,6 +276,17 @@ public class MainFormController {
     }
 
     public void btnRegisterOnAction(ActionEvent actionEvent) {
+        try {
+            programBo.register(
+                    (Long) cmbStudentForProgram.getValue(),
+                    (Long) cmbPrograms.getValue()
+            );
+            new Alert(Alert.AlertType.INFORMATION, "Registered").show();
+            loadAllRegistrations();
+        } catch (Exception e) {
+            System.out.println(e);
+            new Alert(Alert.AlertType.ERROR, "Try Again").show();
+        }
     }
 
     public void btnSaveProgramOnAction(ActionEvent actionEvent) {

@@ -1,5 +1,6 @@
 package lk.kushan.sms.bo.custom;
 
+import lk.kushan.sms.dto.CustomRegistrationData;
 import lk.kushan.sms.dto.ProgramDto;
 
 import java.sql.SQLException;
@@ -11,4 +12,7 @@ public interface ProgramBo {
 
     public void deleteProgramById(long id) throws SQLException, ClassNotFoundException, ClassNotFoundException;
     public void updateProgram(ProgramDto dto) throws SQLException, ClassNotFoundException, ClassNotFoundException;
+    void register(long studentId, long programId);
+    List<Long> findAllStudentIds();
+    List<CustomRegistrationData> findAllRegistrations();
 }

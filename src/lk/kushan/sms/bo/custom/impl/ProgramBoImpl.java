@@ -3,11 +3,14 @@ package lk.kushan.sms.bo.custom.impl;
 import lk.kushan.sms.bo.custom.ProgramBo;
 import lk.kushan.sms.dao.DaoFactory;
 import lk.kushan.sms.dao.custom.ProgramDao;
+import lk.kushan.sms.dto.CustomRegistrationData;
 import lk.kushan.sms.dto.ProgramDto;
 import lk.kushan.sms.entity.Program;
+import lk.kushan.sms.entity.Registration;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ProgramBoImpl implements ProgramBo {
@@ -47,5 +50,31 @@ public class ProgramBoImpl implements ProgramBo {
         program.setCredit(dto.getCredit());
         program.setTitle(dto.getTitle());
         programDao.update(program);
+    }
+
+    @Override
+    public List<Long> findAllStudentIds() {
+        return programDao.findAllProgramIds();
+    }
+
+    @Override
+    public void register(long studentId, long programId) {
+        programDao.register(studentId,programId);
+    }
+
+    @Override
+    public List<CustomRegistrationData> findAllRegistrations() {
+        List<CustomRegistrationData> data = new ArrayList<>();
+        for (Registration temp:programDao.findAllRegistrations()
+        ) {
+            data.add(
+                    new CustomRegistrationData(
+                            temp.getRegDate(),
+                            temp.getStudent().getName(),
+                            temp.getProgram().getTitle()
+                    )
+            );
+        }
+        return data;
     }
 }
