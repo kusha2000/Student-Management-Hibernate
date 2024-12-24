@@ -213,6 +213,7 @@ public class MainFormController {
                 btnStudentSave.setText("Save Student");
                 loadAllStudents();
                 loadAllStudentsForLaptopSection();
+                clearTextFields();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -223,6 +224,7 @@ public class MainFormController {
                 new Alert(Alert.AlertType.INFORMATION, "Student Saved").show();
                 loadAllStudents();
                 loadAllStudentsForLaptopSection();
+                clearTextFields();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -241,6 +243,7 @@ public class MainFormController {
             laptopBo.saveLaptop(new CreateLaptopDto(cmbStudent.getValue(), txtLapBrand.getText()));
             new Alert(Alert.AlertType.INFORMATION, "Laptop Saved").show();
             loadAllLaptops();
+            clearTextFields();
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -306,7 +309,8 @@ public class MainFormController {
                 selectedProgramId=null;
                 btnProgramSave.setText("Save Program");
                 loadAllPrograms();
-
+                loadProgramsForRegistrationSection();
+                clearTextFields();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -316,6 +320,8 @@ public class MainFormController {
                 programBo.saveProgram(dto);
                 new Alert(Alert.AlertType.INFORMATION, "Program Saved").show();
                 loadAllPrograms();
+                loadProgramsForRegistrationSection();
+                clearTextFields();
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Try Again").show();
 
@@ -326,5 +332,14 @@ public class MainFormController {
     public void newProgramOnAction(ActionEvent actionEvent) {
         selectedProgramId=null;
         btnProgramSave.setText("Save Program");
+    }
+
+    private void clearTextFields() {
+        txtName.clear();
+        txtContact.clear();
+        txtLapBrand.clear();
+        txtProgramCredit.clear();
+        txtProgramTitle.clear();
+
     }
 }
